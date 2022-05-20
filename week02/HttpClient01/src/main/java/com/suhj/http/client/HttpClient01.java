@@ -17,7 +17,8 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 public class HttpClient01 {
     public static void main(String[] args) throws Exception {
         try (final CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            final HttpGet httpget = new HttpGet("http://localhost:8801/");
+            //final HttpGet httpget = new HttpGet("http://localhost:8801/");
+            final HttpGet httpget = new HttpGet("http://localhost:8888/api/hello");
 
             System.out.println("Executing request " + httpget.getMethod() + " " + httpget.getUri());
 
