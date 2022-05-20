@@ -1,6 +1,7 @@
 package com.suhj.netty.inbound;
 
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -47,6 +48,7 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void handle(FullHttpRequest fullRequest, ChannelHandlerContext ctx) throws Exception {
+
         //拼接访问后端服务的url
         final String url = proxyServer + fullRequest.uri();
         //System.out.println("执行代理请求:"+ url);

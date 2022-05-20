@@ -22,10 +22,8 @@ public class HttpInboundServer {
     }
 
     public void run() throws  Exception {
-        //创建EventLoopGroup
-        ////向通道注册连接
+
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        ////
         EventLoopGroup workerGroup = new NioEventLoopGroup(16);
 
         try{
