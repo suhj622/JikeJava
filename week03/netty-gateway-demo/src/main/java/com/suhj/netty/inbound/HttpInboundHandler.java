@@ -1,7 +1,8 @@
 package com.suhj.netty.inbound;
 
+import com.suhj.netty.filter.HeaderHttpRequestFilter;
+import com.suhj.netty.filter.HttpRequestFilter;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -24,6 +25,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
 
     private final String proxyServer;
+    private HttpRequestFilter filter = new HeaderHttpRequestFilter();
 
     public HttpInboundHandler(String proxyServer) {
         this.proxyServer = proxyServer;
@@ -33,7 +35,7 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception  {
         try {
             FullHttpRequest fullRequest = (FullHttpRequest) msg;
-            handle(fullRequest, ctx);
+            handle(fullRequest, ctx, filter);
         } catch(Exception e) {
             e.printStackTrace();
         } finally {
@@ -47,12 +49,15 @@ public class HttpInboundHandler extends ChannelInboundHandlerAdapter {
         ctx.flush();
     }
 
-    private void handle(FullHttpRequest fullRequest, ChannelHandlerContext ctx) throws Exception {
+    private void handle(FullHttpRequest fullRequest, ChannelHandlerContext ctx, HttpRequestFilter filter) throws Exception {
 
         //拼接访问后端服务的url
         final String url = proxyServer + fullRequest.uri();
         //System.out.println("执行代理请求:"+ url);
 
+        //添加请求过滤器
+        filter.filter(fullRequest, ctx);
+        //System.out.println(fullRequest);
         //处理请求
         try (final CloseableHttpClient httpclient = HttpClients.createDefault()) {
             final HttpGet httpget = new HttpGet(url);
